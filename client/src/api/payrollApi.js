@@ -1,5 +1,10 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+import {
+  API_BASE_URL,
+  DEMO_MODE,
+  getDemoBpiCsvBlob,
+  getDemoPayrollExport,
+  getDemoPayrollSummaryResponse
+} from "./apiClient";
 
 async function handleResponse(response) {
   const contentType = response.headers.get("content-type") || "";
@@ -29,35 +34,58 @@ async function handleResponse(response) {
 }
 
 export async function getPayrollSummary(payCycleId) {
-  const response = await fetch(
-    `${API_BASE_URL}/payroll/summary?payCycleId=${payCycleId}`
-  );
-  return handleResponse(response);
+  if (DEMO_MODE) {
+    return getDemoPayrollSummaryResponse(payCycleId);
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/payroll/summary?payCycleId=${payCycleId}`
+    );
+    return await handleResponse(response);
+  } catch (error) {
+    return getDemoPayrollSummaryResponse(payCycleId);
+  }
 }
 
 export async function exportPayrollJson(payCycleId) {
-  const response = await fetch(
-    `${API_BASE_URL}/payroll/export?payCycleId=${payCycleId}`
-  );
-  return handleResponse(response);
+  if (DEMO_MODE) {
+    return getDemoPayrollExport(payCycleId);
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/payroll/export?payCycleId=${payCycleId}`
+    );
+    return await handleResponse(response);
+  } catch (error) {
+    return getDemoPayrollExport(payCycleId);
+  }
 }
 
 export async function exportPayrollBpiCsv(payCycleId) {
-  const response = await fetch(
-    `${API_BASE_URL}/payroll/export?payCycleId=${payCycleId}&format=bpi`
-  );
-
-  if (!response.ok) {
-    let errorMessage = "Failed to export BPI CSV.";
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.message || errorMessage;
-    } catch {
-      errorMessage = "Failed to export BPI CSV.";
-    }
-    throw new Error(errorMessage);
+  if (DEMO_MODE) {
+    return getDemoBpiCsvBlob(payCycleId);
   }
 
-  const blob = await response.blob();
-  return blob;
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/payroll/export?payCycleId=${payCycleId}&format=bpi`
+    );
+
+    if (!response.ok) {
+      let errorMessage = "Failed to export BPI CSV.";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        errorMessage = "Failed to export BPI CSV.";
+      }
+      throw new Error(errorMessage);
+    }
+
+    return await response.blob();
+  } catch (error) {
+    return getDemoBpiCsvBlob(payCycleId);
+  }
 }

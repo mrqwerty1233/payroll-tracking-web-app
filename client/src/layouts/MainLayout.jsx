@@ -2,6 +2,9 @@ import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 
+const DEMO_MODE =
+  String(import.meta.env.VITE_DEMO_MODE || "").toLowerCase() === "true";
+
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -15,6 +18,14 @@ export default function MainLayout() {
         }`}
       >
         <div className="w-full max-w-none">
+          {DEMO_MODE && (
+            <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 shadow-sm">
+              <span className="font-semibold">Demo Mode Active:</span> this public
+              deployment is using sample data for portfolio viewing. Changes are not
+              saved.
+            </div>
+          )}
+
           <Outlet />
         </div>
       </main>

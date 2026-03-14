@@ -1,7 +1,13 @@
-const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/expenses`;
+import {
+  apiJsonWithDemoFallback,
+  getDemoExpenses
+} from "./apiClient";
 
 export async function getExpenses(payCycleId = "") {
   const query = payCycleId ? `?payCycleId=${payCycleId}` : "";
-  const response = await fetch(`${BASE_URL}${query}`);
-  return response.json();
+
+  return apiJsonWithDemoFallback(`/expenses${query}`, {
+    fallbackData: getDemoExpenses(payCycleId),
+    errorMessage: "Failed to fetch expenses."
+  });
 }

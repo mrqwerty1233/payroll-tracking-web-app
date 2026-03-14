@@ -1,4 +1,9 @@
-const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/approvals`;
+import {
+  apiJson,
+  apiJsonWithDemoFallback,
+  demoWriteSuccess,
+  getDemoApprovals
+} from "./apiClient";
 
 export async function getApprovals(payCycleId = "", status = "") {
   const params = new URLSearchParams();
@@ -7,27 +12,35 @@ export async function getApprovals(payCycleId = "", status = "") {
   if (status) params.append("status", status);
 
   const query = params.toString();
-  const response = await fetch(query ? `${BASE_URL}?${query}` : BASE_URL);
-  return response.json();
+
+  return apiJsonWithDemoFallback(`/approvals${query ? `?${query}` : ""}`, {
+    fallbackData: getDemoApprovals(payCycleId, status),
+    errorMessage: "Failed to fetch approvals."
+  });
 }
 
 export async function getApprovalsByPayCycle(payCycleId) {
-  const response = await fetch(`${BASE_URL}?payCycleId=${payCycleId}`);
-  return response.json();
+  return apiJsonWithDemoFallback(`/approvals?payCycleId=${payCycleId}`, {
+    fallbackData: getDemoApprovals(payCycleId, ""),
+    errorMessage: "Failed to fetch approvals."
+  });
 }
 
 export async function approvePayroll({ pay_cycle_id, employee_id, approved_by }) {
-  const response = await fetch(`${BASE_URL}/approve`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      pay_cycle_id,
-      employee_id,
-      approved_by
-    })
-  });
-
-  return response.json();
+  try {
+    return await apiJson("/approvals/approve", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        pay_cycle_id,
+        employee_id,
+        approved_by
+      }),
+      errorMessage: "Failed to approve payroll."
+    });
+  } catch (error) {
+    return demoWriteSuccess("Demo mode active. Payroll approval was simulated.");
+  }
 }
