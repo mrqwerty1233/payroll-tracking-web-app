@@ -185,7 +185,7 @@ export default function Navbar({ collapsed, setCollapsed }) {
             Payroll Tracking App
           </h1>
           <p className="mt-3 text-sm leading-6 text-slate-400">
-            Sole Surgeon Practical Exam System
+            Payroll Tracking Web App
           </p>
         </div>
 
