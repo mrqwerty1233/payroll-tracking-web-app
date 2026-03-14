@@ -1,0 +1,29 @@
+{
+  "name": "payroll-tracking-server",
+  "version": "1.0.0",
+  "description": "Payroll tracking backend server",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "seed": "node src/database/seed.js",
+    "migrate:employee-profiles": "node src/database/migrateEmployeeProfiles.js",
+    "migrate:payroll-adjustments": "node src/database/migratePayrollAdjustments.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "csv-parse": "^5.5.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.1.0",
+    "multer": "^1.4.5-lts.2",
+    "sqlite3": "^5.1.7",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
