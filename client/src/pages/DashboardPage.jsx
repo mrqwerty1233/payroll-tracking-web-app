@@ -5,14 +5,17 @@ import {
   CalendarDays,
   ClipboardCheck,
   CreditCard,
+  Eye,
   FileSpreadsheet,
   Receipt,
-  UserPlus,
-  Users
+  UserPlus
 } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import LoadingMessage from "../components/LoadingMessage";
 import { getDashboardSummary } from "../api/dashboardApi";
+
+const DEMO_MODE =
+  String(import.meta.env.VITE_DEMO_MODE || "").toLowerCase() === "true";
 
 const initialSummary = {
   totalEmployees: 0,
@@ -131,10 +134,19 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Dashboard"
-        description="Quick overview of your payroll tracking system."
-      />
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <PageHeader
+          title="Dashboard"
+          description="Quick overview of your payroll tracking system."
+        />
+
+        {DEMO_MODE && (
+          <div className="inline-flex items-center gap-2 self-start rounded-2xl border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700 shadow-sm">
+            <Eye className="h-4 w-4" />
+            Demo Portfolio View
+          </div>
+        )}
+      </div>
 
       {error && (
         <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-rose-700">
